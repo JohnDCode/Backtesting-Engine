@@ -39,3 +39,12 @@
 
 # debug information files
 *.dwo
+
+# Data files
+data/*.csv
+
+# CLION build artifacts
+cmake-build-debug/
+
+# The IDE
+.idea/
