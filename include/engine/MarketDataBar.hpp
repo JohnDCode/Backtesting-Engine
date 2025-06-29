@@ -1,10 +1,11 @@
 /*
 
 JDA Backtesting Engine
-/include/engine/MarketDataBar.hpp -
+/include/engine/MarketDataBar.hpp
 JohnDavid Abe
 
 */
+
 
 #pragma once
 

@@ -1,7 +1,7 @@
 /*
 
 JDA Backtesting Engine
-/include/engine/MarketDataFeed.hpp - MarketDataFeed class handles individual bars for each symbol
+/include/engine/MarketDataFeed.hpp
 JohnDavid Abe
 
 */

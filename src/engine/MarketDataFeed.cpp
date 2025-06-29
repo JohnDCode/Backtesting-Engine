@@ -1,7 +1,7 @@
 /*
 
 JDA Backtesting Engine
-/src/engine/MarketDataFeed.cpp - Implementation of MarketDataFeed class
+/src/engine/MarketDataFeed.cpp
 JohnDavid Abe
 
 */
