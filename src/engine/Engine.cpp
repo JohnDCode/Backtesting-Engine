@@ -8,6 +8,7 @@ JohnDavid Abe
 
 #include "engine/Engine.hpp"
 #include "engine/Strategy.hpp"  // Required for calling strategy logic
+#include <iostream>
 
 /**
  * @brief Constructor for the core engine

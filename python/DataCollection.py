@@ -57,7 +57,7 @@ class Data:
 
             # Get the file name and save it to the list of exported csvs
             file_name = symbol + "_" + self.startDate + "_" + self.endDate
-            saved_tuple = (symbol, file_name)
+            saved_tuple = (symbol, f"../data/{file_name}.csv")
             self.csv_paths.append(saved_tuple)
 
             # Retrieve the data from Yahoo finance

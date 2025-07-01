@@ -16,6 +16,7 @@ JohnDavid Abe
 #include "engine/OrderManager.hpp"
 #include "engine/MarketDataFeed.hpp"
 #include "engine/Portfolio.hpp"
+#include "engine/MarketDataBar.hpp"
 
 
 // Python subclass of Strategy
@@ -66,7 +67,7 @@ PYBIND11_MODULE(backtest_python, m) {
             std::shared_ptr<Strategy>>())
 
         // Engine method to run the core test
-        .def("run", &Engine::run_backtest);
+        .def("run_backtest", &Engine::run_backtest);
 
 
     // Expose OrderManager
@@ -90,5 +91,16 @@ PYBIND11_MODULE(backtest_python, m) {
         .def(pybind11::init<>())
 
         // MarketDataFeed Load CSV Data method
-        .def("load_csv", &MarketDataFeed::load_from_csv);
+        .def("load_from_csv", &MarketDataFeed::load_from_csv);
+
+
+    // Expose MarketDataBar type
+    pybind11::class_<MarketDataBar>(m, "MarketDataBar")
+        .def_readonly("timestamp", &MarketDataBar::timestamp)
+        .def_readonly("open", &MarketDataBar::open)
+        .def_readonly("close", &MarketDataBar::close)
+        .def_readonly("high", &MarketDataBar::high)
+        .def_readonly("low)", &MarketDataBar::low)
+        .def_readonly("volume", &MarketDataBar::volume);
+
 }

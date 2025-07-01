@@ -31,9 +31,9 @@ import backtest_python
 # The engine will subclass the Strategy class from the cpp module
 class MyStrategy(backtest_python.Strategy):
     # Constructor for Strategy
-    def __int__(self, order_manager):
+    def __int__(self, order_m):
         # Simply call the cpp base class constructor
-        super().init_(order_manager)
+        super().init_(order_m)
 # Now, this subclass must override the base class "on_data" method
 # This method controls the Strategy response to each new bar of data
 # Implement your Strategy here
@@ -60,8 +60,11 @@ class MyStrategy(backtest_python.Strategy):
             # aapl_bar.timestamp
 
         # Example strategy:
-        if bars["AAPL"].high > 500:
+        if bars["AAPL"].open < 100:
             self.buy("AAPL", 10)
+
+        if bars["AAPL"].open > 110:
+            self.sell("AAPL", 10)
 
 
 
@@ -86,7 +89,7 @@ end = "2020-12-31"
 # Next, populate the "symbols" array with each symbol utilized in the trading
 # strategy:
     #     ["AAPL", "TSLA", "MSFT"]
-symbols = ["AAPL", "TSLA", "MSFT"]
+symbols = ["AAPL"]
 # Finally, an instance of the data class is created, and the appropriate data is
 # collected and loaded into a new data feed object
 data = Data(symbols, start, end)
@@ -104,7 +107,7 @@ for csv in data.csv_paths:
 
 
 
-# Step 0: Set Options (will add custon config later)
+# Step 0: Set Options (will add custom config later)
 
 
 
@@ -122,7 +125,7 @@ cash = 1000
 # Finally, the Engine is initialized with the previously created objects
 portfolio = backtest_python.Portfolio(cash)
 order_manager = backtest_python.OrderManager()
-strategy = backtest_python.Strategy(order_manager)
+strategy = MyStrategy(order_manager)
 engine = backtest_python.Engine(market_data, order_manager, portfolio, strategy)
 # Run the Engine!
 engine.run_backtest()
