@@ -8,6 +8,7 @@ JohnDavid Abe
 
 #include "engine/Portfolio.hpp"
 #include <stdexcept>
+#include <utility>
 
 /**
  * @brief Creates Portfolio object with certain amount of starting cash
@@ -108,3 +109,17 @@ double Portfolio::get_equity(const std::unordered_map<std::string, MarketDataBar
     // Return the total equity
     return total;
 }
+
+/**
+ * @brief Gets all the symbol's the portfolio has a position in
+ *
+ * @return Vector of the symbols the portfolio has a position in (includes symbols that had a previous nonzero position but are now zero)
+ */
+std::vector<std::string> Portfolio::get_symbols() const {
+    std::vector<std::string> symbols;
+    for (auto pair : positions_) {
+        symbols.push_back(pair.first);
+    }
+    return symbols;
+}
+

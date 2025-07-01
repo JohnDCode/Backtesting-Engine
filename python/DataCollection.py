@@ -10,6 +10,7 @@
 
 import yfinance
 import pandas
+import os
 
 
 # Class handling the data fed to the engine to properly complete the backtest
@@ -59,6 +60,14 @@ class Data:
             file_name = symbol + "_" + self.startDate + "_" + self.endDate
             saved_tuple = (symbol, f"../data/{file_name}.csv")
             self.csv_paths.append(saved_tuple)
+
+            # Check if the data already exists in the /data folder
+            found = False
+            for entry in os.listdir("../data"):
+                if f"{file_name}.csv" == entry:
+                    found = True
+                    break
+            if found: continue
 
             # Retrieve the data from Yahoo finance
             data = yfinance.download(symbol, start=self.startDate, end=self.endDate)

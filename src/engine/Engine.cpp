@@ -34,6 +34,8 @@ Engine::Engine(
  */
 void Engine::run_backtest() {
 
+    double startingCash = portfolio_->get_cash();
+
     // Get the number of steps (bars) that the data contains and that the test will execute
     int num_timesteps = market_data_feed_->num_bars();
 
@@ -55,4 +57,16 @@ void Engine::run_backtest() {
         // Clear all pending orders
         order_manager_->clear();
     }
+
+    std::cerr << "----------------------------------------------------------" << std::endl;
+    std::cerr << "Backtest Report:\n" << std::endl;
+
+    std::cerr << "Starting Cash: " << startingCash << std::endl;
+    std::cerr << "Ending Cash: " << portfolio_->get_cash() << "\n" << std::endl;
+
+    for (std::string symbol : portfolio_->get_symbols()) {
+        std::cerr << "Symbol: " << symbol << " | Position: " << portfolio_->get_position(symbol) << std::endl;
+    }
+
+    std::cerr << "----------------------------------------------------------" << std::endl;
 }

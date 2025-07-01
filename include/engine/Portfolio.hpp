@@ -34,6 +34,7 @@ public:
     double get_cash() const;
     int get_position(const std::string& symbol) const;
     double get_equity(const std::unordered_map<std::string, MarketDataBar>& market_data) const;
+    std::vector<std::string> get_symbols() const;
 
 private:
 

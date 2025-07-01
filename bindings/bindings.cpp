@@ -81,7 +81,12 @@ PYBIND11_MODULE(backtest_python, m) {
     pybind11::class_<Portfolio, std::shared_ptr<Portfolio>>(m, "Portfolio")
 
         // Portfolio constructor
-        .def(pybind11::init<double>());
+        .def(pybind11::init<double>())
+
+        // Expose accessor methods from portfolio
+        .def("get_cash", &Portfolio::get_cash)
+        .def("get_position", &Portfolio::get_position)
+        .def("get_equity", &Portfolio::get_equity);
 
 
     // Expose MarketDataFeed
@@ -102,5 +107,4 @@ PYBIND11_MODULE(backtest_python, m) {
         .def_readonly("high", &MarketDataBar::high)
         .def_readonly("low)", &MarketDataBar::low)
         .def_readonly("volume", &MarketDataBar::volume);
-
 }

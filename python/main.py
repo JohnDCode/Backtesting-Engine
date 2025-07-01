@@ -26,7 +26,24 @@ import backtest_python
 
 
 
-# Step 1: Implement Strategy
+# Step 1: Choose Starting Cash
+
+# First, the user Portfolio must be generated. To do so, the Portfolio's
+# starting cash must also be generated
+cash = 1000
+# Finally, the Engine is initialized with the previously created objects
+portfolio = backtest_python.Portfolio(cash)
+
+
+
+
+
+
+
+
+
+
+# Step 2: Implement Strategy
 
 # The engine will subclass the Strategy class from the cpp module
 class MyStrategy(backtest_python.Strategy):
@@ -39,6 +56,7 @@ class MyStrategy(backtest_python.Strategy):
 # Implement your Strategy here
     def on_data(self, bars):
         # The user has the following actions available for the Strategy to perform:
+
             # self.buy(symbol, # contracts)                       -->     Market Orders
             # self.sell(symbol, # contracts)
 
@@ -59,11 +77,18 @@ class MyStrategy(backtest_python.Strategy):
             # aapl_bar.volume
             # aapl_bar.timestamp
 
-        # Example strategy:
-        if bars["AAPL"].open < 100:
+        # Finally, the user can also access information on their portfolio:
+
+            # portfolio.get_cash()              -->     Get cash on hand
+            # portfolio.get_equity(bars)        -->     Get current equity
+            # portfolio.get_position("AAPL")    -->     Get position on a particular symbol
+
+
+        # Example strategy (buying and selling Apple):
+        if bars["AAPL"].open < 60 and portfolio.get_cash() > 600:
             self.buy("AAPL", 10)
 
-        if bars["AAPL"].open > 110:
+        if bars["AAPL"].open > 110 and portfolio.get_position("AAPL") > 9:
             self.sell("AAPL", 10)
 
 
@@ -75,7 +100,7 @@ class MyStrategy(backtest_python.Strategy):
 
 
 
-# Step 2: Import Data
+# Step 3: Import Data
 
 # The engine will simulate the implemented trading strategy with only the data
 # it has been given. In order to ensure the trading strategy is properly tested,
@@ -118,14 +143,15 @@ for csv in data.csv_paths:
 
 
 
-# Step 3: Run the Engine
+# Step 4: Run the Engine
 
-# Here, define the amount of cash you wish the Portfolio to begin with
-cash = 1000
-# Finally, the Engine is initialized with the previously created objects
-portfolio = backtest_python.Portfolio(cash)
+# No input is required here. Each component is used to create the engine, and the engine is run
 order_manager = backtest_python.OrderManager()
 strategy = MyStrategy(order_manager)
 engine = backtest_python.Engine(market_data, order_manager, portfolio, strategy)
 # Run the Engine!
 engine.run_backtest()
+
+
+
+# Graphs. slippage
