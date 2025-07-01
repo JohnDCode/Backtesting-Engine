@@ -45,7 +45,7 @@ void Engine::run_backtest() {
         // Feed the strategy data and allow the strategy to operate (Ex: create a market order)
         strategy_->on_data(market_data);
 
-        // have order manager process orders made by strategy
+        // Have order manager process orders made by strategy
         auto executed_orders = order_manager_->process_orders(market_data);
 
         // "Simulate" each executed order by updating the portfolio to match

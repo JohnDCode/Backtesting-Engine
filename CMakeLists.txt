@@ -8,6 +8,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 # Step 1: Build C++ engine as a static library
 file(GLOB_RECURSE ENGINE_SRC CONFIGURE_DEPENDS src/engine/*.cpp)
 add_library(backtest_lib STATIC ${ENGINE_SRC})
+set_target_properties(backtest_lib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(backtest_lib PUBLIC include)
 
 # Step 2: Optional C++ executable for testing

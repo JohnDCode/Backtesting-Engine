@@ -22,8 +22,11 @@ public:
     // Constructor
     Strategy(OrderManager& order_manager);
 
+    // Destructor
+    virtual ~Strategy() = default;
+
     // The integral part of the strategy object, taking data and making decisions based on the data
-    void on_data(const std::unordered_map<std::string, MarketDataBar>& bars);
+    virtual void on_data(const std::unordered_map<std::string, MarketDataBar>& bars) = 0;
 
     // Strategy API
     void buy(const std::string& symbol, int quantity);

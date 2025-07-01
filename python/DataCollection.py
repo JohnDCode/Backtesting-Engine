@@ -1,9 +1,22 @@
+# --------------------------------------------------------------------
+
+# JDA Backtesting Engine
+# /python/main.py
+# JohnDavid Abe
+
+# --------------------------------------------------------------------
+
+
+
 import yfinance
 import pandas
 
 
 # Class handling the data fed to the engine to properly complete the backtest
 class Data:
+
+    # Tuple of CSV data exports the Data class makes and their corresponding symbol
+    csv_paths = []
 
 
     # Constructor
@@ -15,6 +28,8 @@ class Data:
         # Start/End date to the backtest
         self.startDate = start_date
         self.endDate = end_date
+
+
 
 
     # Accessor methods for each property
@@ -40,7 +55,10 @@ class Data:
         # Loop through each symbol
         for symbol in self.symbols:
 
-            fileName = symbol + "_" + self.startDate + "_" + self.endDate
+            # Get the file name and save it to the list of exported csvs
+            file_name = symbol + "_" + self.startDate + "_" + self.endDate
+            saved_tuple = (symbol, file_name)
+            self.csv_paths.append(saved_tuple)
 
             # Retrieve the data from Yahoo finance
             data = yfinance.download(symbol, start=self.startDate, end=self.endDate)
@@ -63,4 +81,4 @@ class Data:
             data = data[["timestamp", "open", "high", "low", "close", "volume"]]
 
             # Export the data to the appropriate csv
-            data.to_csv(f"../data/{fileName}.csv", index=False)
+            data.to_csv(f"../data/{file_name}.csv", index=False)

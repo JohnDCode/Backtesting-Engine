@@ -17,32 +17,6 @@ Strategy::Strategy(OrderManager& order_manager)
     : order_manager_(order_manager) {}
 
 /**
- * @brief The integral part of the strategy object, taking data and making decisions based on the data
- *
- * @param bars The symbol/data for a bar that the strategy will make decisions based on
- */
-void Strategy::on_data(const std::unordered_map<std::string, MarketDataBar>& bars) {
-
-    // Increment the number of bars that the strategy has handled
-    bars_seen_++;
-
-    // Example 1: Buy AAPL at bar 10
-    if (bars_seen_ == 10) {
-        buy("AAPL", 100);
-    }
-
-    // Example 2: Limit Buy TSLA if price drops to 600
-    if (bars_seen_ == 15) {
-        limit_buy("TSLA", 50, 600.0);
-    }
-
-    // Example 3: Stop Sell GOOG if price drops below 2800
-    if (bars_seen_ == 20) {
-        stop_sell("GOOG", 100, 2800.0);
-    }
-}
-
-/**
  * @brief Submits a market buy order to the order manager
  *
  * @param symbol The symbol to trade
