@@ -58,6 +58,7 @@ void Engine::run_backtest() {
         order_manager_->clear();
     }
 
+    // Print results of test
     std::cerr << "----------------------------------------------------------" << std::endl;
     std::cerr << "Backtest Report:\n" << std::endl;
 

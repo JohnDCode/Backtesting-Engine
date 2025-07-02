@@ -105,6 +105,8 @@ PYBIND11_MODULE(backtest_python, m) {
         .def_readonly("open", &MarketDataBar::open)
         .def_readonly("close", &MarketDataBar::close)
         .def_readonly("high", &MarketDataBar::high)
-        .def_readonly("low)", &MarketDataBar::low)
-        .def_readonly("volume", &MarketDataBar::volume);
+        .def_readonly("low", &MarketDataBar::low)
+        .def_readonly("volume", &MarketDataBar::volume)
+        .def_readonly("bid", &MarketDataBar::bid)
+        .def_readonly("ask", &MarketDataBar::ask);
 }

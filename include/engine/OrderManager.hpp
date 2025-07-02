@@ -31,6 +31,9 @@ public:
     // Clear all pending orders
     void clear();
 
+    // Simulate a price slipping prior to execution
+    static double simulate_slippage(const Order& order, const MarketDataBar& bar);
+
 private:
 
     // All pending orders (orders that have been submitted but have not been executed yet)

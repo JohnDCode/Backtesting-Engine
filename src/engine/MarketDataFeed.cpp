@@ -65,6 +65,10 @@ void MarketDataFeed::load_from_csv(const std::string& symbol, const std::string&
         std::getline(ss, token, ','); bar.open = std::stod(token);
         std::getline(ss, token, ','); bar.volume = std::stod(token);
 
+        // Calculate simulated bid and ask prices during the bar (0.2% estimated spread)
+        bar.bid = bar.close - (0.002 * bar.close / 2.0);
+        bar.ask = bar.close + (0.002 * bar.close / 2.0);
+
         // Add the bar to the list of bars for the symbol
         bars.push_back(bar);
     }

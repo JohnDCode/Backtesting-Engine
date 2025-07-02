@@ -24,4 +24,7 @@ struct MarketDataBar {
     double low =  0.0; ///< Lowest price for the symbol during the bar
 
     double volume = 0.0; ///< Number of contracts during the bar
+
+    double bid = 0.0; ///< Simulated bid price (in order to minimize overestimation of profits)
+    double ask = 0.0; ///< Simulated ask price (in order to minimize overestimation of profits)
 };

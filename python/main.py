@@ -29,7 +29,7 @@ import backtest_python
 # Step 1: Choose Starting Cash
 
 # First, the user Portfolio must be generated. Choose starting cash for the Portfolio
-cash = 1000
+cash = 5000
 portfolio = backtest_python.Portfolio(cash)
 
 
@@ -73,6 +73,8 @@ class MyStrategy(backtest_python.Strategy):
             # aapl_bar.close
             # aapl_bar.high
             # aapl_bar.low
+            # aapl_bar.bid                 -->     Simulated bid/ask prices with 0.02% spread
+            # aapl_bar.ask
             # aapl_bar.volume
             # aapl_bar.timestamp
 
@@ -84,11 +86,12 @@ class MyStrategy(backtest_python.Strategy):
 
 
         # Example strategy (buying and selling Apple):
-        if bars["AAPL"].open < 202 and portfolio.get_cash() > 203:
-            self.buy("AAPL", 1)
+        if bars["AAPL"].ask < 100 and portfolio.get_cash() > 500:
+            self.buy("AAPL", 5)
 
-        if bars["AAPL"].open > 203 and portfolio.get_position("AAPL") > 0:
-            self.sell("AAPL", 1)
+        if bars["AAPL"].bid > 120 and portfolio.get_position("AAPL") > 5:
+            self.sell("AAPL", 5)
+
 
 
 
@@ -110,13 +113,13 @@ class MyStrategy(backtest_python.Strategy):
     # "60m"             60 Minutes          730 Days
     # "1d"              1 Day               ~50 Years
 # Choose the bar size:
-barSize = "2m"
+barSize = "1d"
 
 # Next, set the start and end dates for the test.
 # Use the following convention for setting the dates:
     # "YEAR-MONTH-DAY" --> "2020-01-01"
-start = "2025-06-25"
-end = "2025-06-26"
+start = "2020-01-01"
+end = "2022-01-01"
 
 # Next, populate the "symbols" array with each symbol utilized in the strategy:
     # ["AAPL", "TSLA", "MSFT"]
@@ -146,3 +149,8 @@ strategy = MyStrategy(order_manager)
 engine = backtest_python.Engine(market_data, order_manager, portfolio, strategy)
 # # Run the Engine!
 engine.run_backtest()
+
+# finish features first, then add reports, then make examples, project done (1 each night)
+# make webiste entry with examples, publish github of just the .so file and the python files and the examples and the output of each example once report gen works
+# Order flow question
+# Partial Fills, ORder Queue Priorty, Latency, Corporate Actions, Buying power, Short Selling, Position Sizing, Lookahead Bias Protection, Suriviosrship Bias Elimination, Data Snoooping & Curve Fitting Control, Smulated Market Impact

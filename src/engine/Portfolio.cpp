@@ -7,8 +7,10 @@ JohnDavid Abe
 */
 
 #include "engine/Portfolio.hpp"
+#include "engine/OrderManager.hpp"
 #include <stdexcept>
 #include <utility>
+#include <iostream>
 
 /**
  * @brief Creates Portfolio object with certain amount of starting cash
@@ -43,8 +45,9 @@ void Portfolio::apply_executed_orders(const std::vector<Order>& executed_orders,
         // Retrieve the bar (is value in key/value pair from map)
         const MarketDataBar& bar = it->second;
 
-        // Trade using the closing price of the bar
-        double execution_price = bar.close;
+
+        // Trade using correct (bid,ask) price + slippage
+        double execution_price = OrderManager::simulate_slippage(order, bar);
 
         // Get the number of shares and the cost of the execution from the order
         int shares = order.quantity;
@@ -54,6 +57,11 @@ void Portfolio::apply_executed_orders(const std::vector<Order>& executed_orders,
         // Update the portfolio based on the trade (cash and positions)
         cash_ -= cost;
         positions_[order.symbol] += shares;
+
+        // Apply fees and commissions for the trade
+        cash_ -= std::abs(shares) * 0.005; // $0.005 per share
+        cash_ -= std::abs(cost) * 0.0001; // 0.01% of total order as well
+
     }
 }
 

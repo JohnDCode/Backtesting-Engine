@@ -7,6 +7,9 @@ JohnDavid Abe
 */
 
 #include "engine/OrderManager.hpp"
+#include <random>
+#include <algorithm>
+#include <iostream>
 
 
 /**
@@ -57,9 +60,9 @@ std::vector<Order> OrderManager::process_orders( const std::unordered_map<std::s
 
             case OrderType::Limit:
 
-                // Limit Buy: fill if bar.low <= limit price
-                // Limit Sell: fill if bar.high >= limit price
-                if ((order.quantity > 0 && bar.low <= order.price) || (order.quantity < 0 && bar.high >= order.price)) {
+                // Limit Buy: fill if bar.ask <= limit price
+                // Limit Sell: fill if bar.bid >= limit price
+                if ((order.quantity > 0 && bar.ask <= order.price) || (order.quantity < 0 && bar.bid >= order.price)) {
                     executed.push_back(order);
                 }
                 break;
@@ -83,4 +86,46 @@ std::vector<Order> OrderManager::process_orders( const std::unordered_map<std::s
  */
 void OrderManager::clear() {
     pending_orders_.clear();
+}
+
+/**
+ * @brief Simulates the slippage for a particular order
+ *
+ * @param order The order in which to simulate the slip for
+ * @param bar The market data to base the slip off
+ *
+ * @return Returns the execution price of the order with randomized volume based slippage
+ */
+double OrderManager::simulate_slippage(const Order& order, const MarketDataBar& bar) {
+
+    // Volume based slippage (100% is max)
+    double volumeFraction = std::min(std::abs(order.quantity) / static_cast<double>(bar.volume), 1.0);
+
+    // Applies base slippage
+    double slipPct = 0.001 * volumeFraction;
+
+    // Random noise as a fraction of price (normal distribution centered at 0)
+    static thread_local std::mt19937 rng(std::random_device{}());
+    std::normal_distribution<double> noiseDist(0.0, slipPct * 0.75);
+
+    double noise = noiseDist(rng);
+
+    // If buying, price slips up
+    double slip{};
+    if (order.quantity > 0) {
+        slip = 1.0 + slipPct + noise;
+
+    // If selling, price slips down
+    } else {
+        slip = 1.0 - slipPct + noise;
+    }
+
+    // Clamp slip to at least 1% of the price
+    slip = std::max(slip, 0.01);
+
+    // Calculate execution price using slip and correct bid/ask price
+    if (order.quantity > 0) {
+        return bar.ask * slip;
+    }
+    return bar.bid * slip;
 }
