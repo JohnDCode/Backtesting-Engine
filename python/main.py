@@ -152,5 +152,5 @@ engine.run_backtest()
 
 # finish features first, then add reports, then make examples, project done (1 each night)
 # make webiste entry with examples, publish github of just the .so file and the python files and the examples and the output of each example once report gen works
-# Order flow question
+# Before push, debug and test everything. Ensure Engine functions as intended (do walkthrough of the entire engine, using all features)
 # Partial Fills, ORder Queue Priorty, Latency, Corporate Actions, Buying power, Short Selling, Position Sizing, Lookahead Bias Protection, Suriviosrship Bias Elimination, Data Snoooping & Curve Fitting Control, Smulated Market Impact

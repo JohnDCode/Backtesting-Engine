@@ -35,6 +35,7 @@ std::vector<Order> OrderManager::process_orders( const std::unordered_map<std::s
 
     // List of orders that will be executed
     std::vector<Order> executed;
+    std::vector<Order> uncompleted;
 
     // Loop through all orders
     for (auto& order : pending_orders_) {
@@ -48,6 +49,9 @@ std::vector<Order> OrderManager::process_orders( const std::unordered_map<std::s
         // If valid data is found, retrieve the bar data for the symbol (which is the second/value component of the map)
         const MarketDataBar& bar = it->second;
 
+        // Get the accessible volume of the symbol for the order
+        int availVol = bar.volume * 0.2; // Assume only 20% is accessible to trader
+
         // Read the type of order
         switch (order.type) {
 
@@ -55,6 +59,13 @@ std::vector<Order> OrderManager::process_orders( const std::unordered_map<std::s
             case OrderType::Market:
 
                 // Market orders always execute, so add it to the list of orders to execute
+
+                // Ensure the market can fill the order, if not cancel the rest of the order
+                if (order.quantity > 0) {
+                    order.quantity = std::min(order.quantity, availVol);
+                } else {
+                    order.quantity = std::max(order.quantity, availVol * -1);
+                }
                 executed.push_back(order);
                 break;
 
@@ -63,7 +74,30 @@ std::vector<Order> OrderManager::process_orders( const std::unordered_map<std::s
                 // Limit Buy: fill if bar.ask <= limit price
                 // Limit Sell: fill if bar.bid >= limit price
                 if ((order.quantity > 0 && bar.ask <= order.price) || (order.quantity < 0 && bar.bid >= order.price)) {
-                    executed.push_back(order);
+
+                    // Ensure the market can fill the order, queue new order with any remaining contracts
+                    if (order.quantity > 0) {
+                        // If the order quantity is too large, queue an identical limit order with remaining contracts
+                        if (order.quantity > availVol) {
+                            Order unfilled = order;
+                            unfilled.quantity = order.quantity - availVol;
+                            order.quantity = availVol;
+                            uncompleted.push_back(unfilled);
+                        }
+                        executed.push_back(order);
+                    } else {
+                        // If the order quantity is too large, queue an identical limit order with remaining contracts
+                        if (order.quantity < availVol * -1) {
+                            Order unfilled = order;
+                            unfilled.quantity = order.quantity + availVol;
+                            order.quantity = availVol * -1;
+                            uncompleted.push_back(unfilled);
+                        }
+                        executed.push_back(order);
+                    }
+
+                } else {
+                    uncompleted.push_back(order);
                 }
                 break;
 
@@ -71,11 +105,24 @@ std::vector<Order> OrderManager::process_orders( const std::unordered_map<std::s
                 // Stop Buy: trigger if bar.high >= stop price
                 // Stop Sell: trigger if bar.low <= stop price
                 if ((order.quantity > 0 && bar.high >= order.price) || (order.quantity < 0 && bar.low <= order.price)) {
+
+                    // Ensure the market can fill the order, if not cancel the rest of the order (like a market order)
+                    if (order.quantity > 0) {
+                        order.quantity = std::min(order.quantity, availVol);
+                    } else {
+                        order.quantity = std::max(order.quantity, availVol * -1);
+                    }
                     executed.push_back(order);
+
+                } else {
+                    uncompleted.push_back(order);
                 }
                 break;
         }
     }
+
+    // Ensure orders that were not filled remain on book
+    this->pending_orders_ = uncompleted;
 
     // Return a list of all orders that can now be executed
     return executed;

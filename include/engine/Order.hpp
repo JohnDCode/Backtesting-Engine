@@ -17,7 +17,7 @@ JohnDavid Abe
 struct Order {
 
     std::string symbol; ///< The symbol of which to trade
-    int quantity; ///< The number of contracts to execute
+    int quantity; ///< The number of contracts (remaining) to execute
     OrderType type; ///< The type of order
 
     double price = 0.0; ///< The price to trigger trade for limit/stop orders

@@ -53,9 +53,6 @@ void Engine::run_backtest() {
 
         // "Simulate" each executed order by updating the portfolio to match
         portfolio_->apply_executed_orders(executed_orders, market_data);
-
-        // Clear all pending orders
-        order_manager_->clear();
     }
 
     // Print results of test
