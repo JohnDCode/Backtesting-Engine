@@ -59,10 +59,10 @@ void MarketDataFeed::load_from_csv(const std::string& symbol, const std::string&
         std::getline(ss, bar.timestamp, ',');
 
         // Extract each numerical value from the line and set the respective properties
-        std::getline(ss, token, ','); bar.open = std::stod(token);
+        std::getline(ss, token, ','); bar.close = std::stod(token);
         std::getline(ss, token, ','); bar.high = std::stod(token);
         std::getline(ss, token, ','); bar.low  = std::stod(token);
-        std::getline(ss, token, ','); bar.close = std::stod(token);
+        std::getline(ss, token, ','); bar.open = std::stod(token);
         std::getline(ss, token, ','); bar.volume = std::stod(token);
 
         // Add the bar to the list of bars for the symbol

@@ -62,7 +62,11 @@ void Engine::run_backtest() {
     std::cerr << "Backtest Report:\n" << std::endl;
 
     std::cerr << "Starting Cash: " << startingCash << std::endl;
-    std::cerr << "Ending Cash: " << portfolio_->get_cash() << "\n" << std::endl;
+    std::cerr << "Ending Cash: " << portfolio_->get_cash() << std::endl;
+
+    // Get the equity at the end of the test using the last set of bar data
+    auto finalBars = market_data_feed_->get_bar_at(market_data_feed_->num_bars() - 1);
+    std::cerr << "Total Equity: " << portfolio_->get_equity(finalBars) << "\n"  << std::endl;
 
     for (std::string symbol : portfolio_->get_symbols()) {
         std::cerr << "Symbol: " << symbol << " | Position: " << portfolio_->get_position(symbol) << std::endl;

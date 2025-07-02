@@ -28,10 +28,8 @@ import backtest_python
 
 # Step 1: Choose Starting Cash
 
-# First, the user Portfolio must be generated. To do so, the Portfolio's
-# starting cash must also be generated
+# First, the user Portfolio must be generated. Choose starting cash for the Portfolio
 cash = 1000
-# Finally, the Engine is initialized with the previously created objects
 portfolio = backtest_python.Portfolio(cash)
 
 
@@ -51,6 +49,7 @@ class MyStrategy(backtest_python.Strategy):
     def __int__(self, order_m):
         # Simply call the cpp base class constructor
         super().init_(order_m)
+
 # Now, this subclass must override the base class "on_data" method
 # This method controls the Strategy response to each new bar of data
 # Implement your Strategy here
@@ -85,11 +84,11 @@ class MyStrategy(backtest_python.Strategy):
 
 
         # Example strategy (buying and selling Apple):
-        if bars["AAPL"].open < 60 and portfolio.get_cash() > 600:
-            self.buy("AAPL", 10)
+        if bars["AAPL"].open < 202 and portfolio.get_cash() > 203:
+            self.buy("AAPL", 1)
 
-        if bars["AAPL"].open > 110 and portfolio.get_position("AAPL") > 9:
-            self.sell("AAPL", 10)
+        if bars["AAPL"].open > 203 and portfolio.get_position("AAPL") > 0:
+            self.sell("AAPL", 1)
 
 
 
@@ -102,22 +101,29 @@ class MyStrategy(backtest_python.Strategy):
 
 # Step 3: Import Data
 
-# The engine will simulate the implemented trading strategy with only the data
-# it has been given. In order to ensure the trading strategy is properly tested,
-# import data for each symbol utilized in the trading strategy.
-#
-# To begin, set the start and end dates for the test. Utilize the following
-# convention for setting the start and end dates:
-    #     "YEAR-MONTH-DAY" --> "2020-01-01"
-start = "2020-01-01"
-end = "2020-12-31"
-# Next, populate the "symbols" array with each symbol utilized in the trading
-# strategy:
-    #     ["AAPL", "TSLA", "MSFT"]
+# The engine will simulate the implemented trading strategy in steps of bars.
+# The following bar sizes are available:
+    # Option            Bar Length          Max Historical Date Available
+
+    # "1m"              1 Minute            7 Days
+    # "2m"              2 Minutes           60 Days
+    # "60m"             60 Minutes          730 Days
+    # "1d"              1 Day               ~50 Years
+# Choose the bar size:
+barSize = "2m"
+
+# Next, set the start and end dates for the test.
+# Use the following convention for setting the dates:
+    # "YEAR-MONTH-DAY" --> "2020-01-01"
+start = "2025-06-25"
+end = "2025-06-26"
+
+# Next, populate the "symbols" array with each symbol utilized in the strategy:
+    # ["AAPL", "TSLA", "MSFT"]
 symbols = ["AAPL"]
-# Finally, an instance of the data class is created, and the appropriate data is
-# collected and loaded into a new data feed object
-data = Data(symbols, start, end)
+
+# Finally, an instance of the data class is created, and the appropriate data is collected
+data = Data(symbols, start, end, barSize)
 data.collect_data()
 market_data = backtest_python.MarketDataFeed()
 for csv in data.csv_paths:
@@ -132,26 +138,11 @@ for csv in data.csv_paths:
 
 
 
-# Step 0: Set Options (will add custom config later)
-
-
-
-
-
-
-
-
-
-
 # Step 4: Run the Engine
 
-# No input is required here. Each component is used to create the engine, and the engine is run
+# # No input is required here. Each component is used to create the engine, and the engine is run
 order_manager = backtest_python.OrderManager()
 strategy = MyStrategy(order_manager)
 engine = backtest_python.Engine(market_data, order_manager, portfolio, strategy)
-# Run the Engine!
+# # Run the Engine!
 engine.run_backtest()
-
-
-
-# Graphs. slippage
