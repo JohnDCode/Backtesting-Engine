@@ -32,9 +32,31 @@ public:
     // Retrieves the size of the data (the number of bars in the dataset)
     size_t num_bars() const;
 
+    // Adds a single symbol's dividends to the list of dividend payments
+    void add_dividends(const std::string& symbol, const std::unordered_map<std::string, double>& dividend_map);
+
+    // Adds a single symbol's stock splits to the list of all splits
+    void add_splits(const std::string& symbol, const std::unordered_map<std::string, double>& split_map);
+
+    // Accessor methods for all data stored in the feed
+    std::unordered_map<std::string, std::vector<MarketDataBar>> get_bar_data() { return data_; }
+
+    // Accessor methods for all data stored in the feed
+    std::unordered_map<std::string, std::unordered_map<std::string, double>> get_dividends() { return dividends_; }
+
+    // Accessor methods for all data stored in the feed
+    std::unordered_map<std::string, std::unordered_map<std::string, double>> get_splits() { return splits_; }
+
 
 private:
 
     // The data object, storing the bars for all symbols
     std::unordered_map<std::string, std::vector<MarketDataBar>> data_;
+
+    // Data to store dividends for symbols (each map stores dividend dates and payouts for one symbol)
+    // The vector stores a list of the dividends, where each entry is one symbol's historical dividends
+    std::unordered_map<std::string, std::unordered_map<std::string, double>> dividends_;
+
+    // Data to store stock splits for symbols (Similar to dividends structure except int for split ratio)
+    std::unordered_map<std::string, std::unordered_map<std::string, double>> splits_;
 };

@@ -6,151 +6,86 @@
 
 # --------------------------------------------------------------------
 
-# Data class for handling backtest data
-from DataCollection import Data
+# Import user configurations and strategy
+from user import Options, MyStrategy
 
 # Packages
-import sys
-import os
+import sys, os, pandas, yfinance
 
 # Import the bound engine
 sys.path.append(os.path.abspath("../cmake-build-debug"))
 import backtest_python
 
 
+# Create portfolio first
+portfolio = backtest_python.Portfolio(Options.cash)
 
-
-
-
-
-
-
-
-# Step 1: Choose Starting Cash
-
-# First, the user Portfolio must be generated. Choose starting cash for the Portfolio
-cash = 5000
-portfolio = backtest_python.Portfolio(cash)
-
-
-
-
-
-
-
-
-
-
-# Step 2: Implement Strategy
-
-# The engine will subclass the Strategy class from the cpp module
-class MyStrategy(backtest_python.Strategy):
-    # Constructor for Strategy
-    def __int__(self, order_m):
-        # Simply call the cpp base class constructor
-        super().init_(order_m)
-
-# Now, this subclass must override the base class "on_data" method
-# This method controls the Strategy response to each new bar of data
-# Implement your Strategy here
-    def on_data(self, bars):
-        # The user has the following actions available for the Strategy to perform:
-
-            # self.buy(symbol, # contracts)                       -->     Market Orders
-            # self.sell(symbol, # contracts)
-
-            # self.limit_buy(symbol, # contracts, price)          -->     Limit Orders
-            # self.limit_sell(symbol, # contracts, price)
-
-            # self.stop_buy(symbol, # contracts, price)           -->     Stop Orders
-            # self.stop_sell(symbol, # contracts, price)
-
-        # The user can also access each symbol's data for the current bar via:
-
-            # aapl_bar = bars["AAPL"]       -->     Get the bar data for the symbol "AAPL"
-
-            # aapl_bar.open                 -->     Retrieve data from the bar
-            # aapl_bar.close
-            # aapl_bar.high
-            # aapl_bar.low
-            # aapl_bar.bid                 -->     Simulated bid/ask prices with 0.02% spread
-            # aapl_bar.ask
-            # aapl_bar.volume
-            # aapl_bar.timestamp
-
-        # Finally, the user can also access information on their portfolio:
-
-            # portfolio.get_cash()              -->     Get cash on hand
-            # portfolio.get_equity(bars)        -->     Get current equity
-            # portfolio.get_position("AAPL")    -->     Get position on a particular symbol
-
-
-        # Example strategy (buying and selling Apple):
-        if bars["AAPL"].ask < 100 and portfolio.get_cash() > 500:
-            self.buy("AAPL", 5)
-
-        if bars["AAPL"].bid > 120 and portfolio.get_position("AAPL") > 5:
-            self.sell("AAPL", 5)
-
-
-
-
-
-
-
-
-
-
-
-# Step 3: Import Data
-
-# The engine will simulate the implemented trading strategy in steps of bars.
-# The following bar sizes are available:
-    # Option            Bar Length          Max Historical Date Available
-
-    # "1m"              1 Minute            7 Days
-    # "2m"              2 Minutes           60 Days
-    # "60m"             60 Minutes          730 Days
-    # "1d"              1 Day               ~50 Years
-# Choose the bar size:
-barSize = "1d"
-
-# Next, set the start and end dates for the test.
-# Use the following convention for setting the dates:
-    # "YEAR-MONTH-DAY" --> "2020-01-01"
-start = "2020-01-01"
-end = "2022-01-01"
-
-# Next, populate the "symbols" array with each symbol utilized in the strategy:
-    # ["AAPL", "TSLA", "MSFT"]
-symbols = ["AAPL"]
-
-# Finally, an instance of the data class is created, and the appropriate data is collected
-data = Data(symbols, start, end, barSize)
-data.collect_data()
+# Create market data feed
 market_data = backtest_python.MarketDataFeed()
-for csv in data.csv_paths:
-    market_data.load_from_csv(csv[0], csv[1])
+
+# Collect bar data
+for symbol in Options.symbols:
+
+    # Compile the file name for bar data
+    file_name = symbol + "_" + Options.start + "_" + Options.end + "_" + Options.barSize
+
+    # Check if the bar data already exists in the /data folder
+    found = False
+    for entry in os.listdir("../data"):
+        if f"{file_name}.csv" == entry:
+            found = True
+            break
+    if found:
+        market_data.load_from_csv(symbol, f"../data/{file_name}.csv")
+        continue
+
+    # Retrieve the bar data from Yahoo finance (throw if args are wrong)
+    try:
+        # Ensure data filled
+        data = yfinance.download(symbol, start=Options.start, end=Options.end, interval=Options.barSize)
+        if data.empty:
+            raise ValueError("Improper data request(s), see commented instructions.")
+
+    except Exception:
+        print("Improper data request(s), see commented instructions.")
+        raise
+
+
+    # Handle MultiIndex columns (e.g., ('Open', 'AAPL')) → 'Open'
+    if isinstance(data.columns, pandas.MultiIndex):
+        data.columns = data.columns.get_level_values(0)
+    data.reset_index(inplace=True)
+
+    # Export the bar data to the appropriate csv
+    data.to_csv(f"../data/{file_name}.csv", index=False)
+
+    # Load bar data to market feed
+    market_data.load_from_csv(symbol, f"../data/{file_name}.csv")
+
+
+# Collect dividend/splits data
+for symbol in Options.symbols:
+
+    # Collect dividend/split data
+    tick = yfinance.Ticker(symbol)
+    div_series = tick.dividends
+    split_series = tick.splits
+
+    # Convert pandas Series to dictionaries that can be past to cpp
+    dividend_map = {str(date.date()): float(value) for date, value in div_series.items()}
+    split_map = {str(date.date()): float(ratio) for date, ratio in split_series.items()}
+    print(dividend_map)
+    print(split_map)
+
+    # Load dividend data to market feed
+    market_data.add_dividends(symbol, dividend_map)
+    market_data.add_splits(symbol, split_map)
 
 
 
 
-
-
-
-
-
-
-# Step 4: Run the Engine
-
-# # No input is required here. Each component is used to create the engine, and the engine is run
+# Create other components of engine and run
 order_manager = backtest_python.OrderManager()
 strategy = MyStrategy(order_manager)
 engine = backtest_python.Engine(market_data, order_manager, portfolio, strategy)
-# # Run the Engine!
 engine.run_backtest()
-
-# finish features first, then add reports, then make examples, project done (1 each night)
-# make webiste entry with examples, publish github of just the .so file and the python files and the examples and the output of each example once report gen works
-# Before push, debug and test everything. Ensure Engine functions as intended (do walkthrough of the entire engine, using all features)
-# Partial Fills, ORder Queue Priorty, Latency, Corporate Actions, Buying power, Short Selling, Position Sizing, Lookahead Bias Protection, Suriviosrship Bias Elimination, Data Snoooping & Curve Fitting Control, Smulated Market Impact

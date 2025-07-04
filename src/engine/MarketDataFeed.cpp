@@ -119,3 +119,21 @@ size_t MarketDataFeed::num_bars() const {
     // Return size of the value in the first symbol's data (value holds the bars, so gets size of bars for the first symbol)
     return data_.begin()->second.size();
 }
+
+/**
+ * @brief Adds a single symbol's dividends to the list of dividend payments
+ *
+ * @param dividends A map of dates and cash/share for all dividend payments for one symbol
+ */
+void MarketDataFeed::add_dividends(const std::string& symbol, const std::unordered_map<std::string, double>& dividend_map) {
+    dividends_[symbol] = dividend_map;
+}
+
+/**
+ * @brief Adds a single symbol's stock splits to the list of all splits
+ *
+ * @param split A map of dates and split ratio for all stock splits for one symbol
+ */
+void MarketDataFeed::add_splits(const std::string& symbol, const std::unordered_map<std::string, double>& split_map) {
+    splits_[symbol] = split_map;
+}

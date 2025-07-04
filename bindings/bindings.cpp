@@ -27,12 +27,13 @@ public:
     using Strategy::Strategy;
 
     // Override the "on_data method" (Python file will implement this)
-    void on_data(const std::unordered_map<std::string, MarketDataBar>& bars) override {
+    void on_data(const std::unordered_map<std::string, MarketDataBar>& bars, Portfolio portfolio) override {
         PYBIND11_OVERRIDE_PURE(
             void,
             Strategy,
             on_data,
-            bars);
+            bars,
+            portfolio);
     }
 };
 
@@ -96,7 +97,11 @@ PYBIND11_MODULE(backtest_python, m) {
         .def(pybind11::init<>())
 
         // MarketDataFeed Load CSV Data method
-        .def("load_from_csv", &MarketDataFeed::load_from_csv);
+        .def("load_from_csv", &MarketDataFeed::load_from_csv)
+
+        // Additional methods to load dividends and stock splits
+        .def("add_dividends", &MarketDataFeed::add_dividends)
+        .def("add_splits", &MarketDataFeed::add_splits);
 
 
     // Expose MarketDataBar type

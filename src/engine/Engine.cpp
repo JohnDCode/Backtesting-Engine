@@ -9,6 +9,7 @@ JohnDavid Abe
 #include "engine/Engine.hpp"
 #include "engine/Strategy.hpp"  // Required for calling strategy logic
 #include <iostream>
+#include <unordered_map>
 
 /**
  * @brief Constructor for the core engine
@@ -45,8 +46,11 @@ void Engine::run_backtest() {
         // Get the bar data for the current bar
         auto market_data = market_data_feed_->get_bar_at(i);
 
+        // Check for corporate actions
+        this->apply_corporate_actions(market_data);
+
         // Feed the strategy data and allow the strategy to operate (Ex: create a market order)
-        strategy_->on_data(market_data);
+        strategy_->on_data(market_data, *portfolio_);
 
         // Have order manager process orders made by strategy
         auto executed_orders = order_manager_->process_orders(market_data);
@@ -71,4 +75,75 @@ void Engine::run_backtest() {
     }
 
     std::cerr << "----------------------------------------------------------" << std::endl;
+}
+
+/**
+ * @brief Checks for corporate actions (dividend payments, stock splits, etc.) and applies appropriate changes
+ *
+ * @param bars Current bar data for each symbol
+ */
+void Engine::apply_corporate_actions(std::unordered_map<std::string, MarketDataBar>& bars) {
+
+    // Dividend payments
+
+    // Loop through each entry and check if the current timestamp matches any of the entries
+    for (const auto& symbolDividends : this->market_data_feed_->get_dividends()) {
+
+        // Get the current date
+        std::string date = bars[symbolDividends.first].timestamp;
+
+        // Possible suffixes for first bar of the day (2 due to daylight savings shifting market open)
+        std::string suffix1 = " 13:30:00+00:00";
+        std::string suffix2 = " 14:30:00+00:00";
+
+        // Attempt to remove either time suffix from date (if bar is first of day)
+        if (date.size() >= suffix1.size() && date.compare(date.size() - suffix1.size(), suffix1.size(), suffix1) == 0) {
+            date.erase(date.size() - suffix1.size());
+        }
+        if (date.size() >= suffix2.size() && date.compare(date.size() - suffix2.size(), suffix2.size(), suffix2) == 0) {
+            date.erase(date.size() - suffix2.size());
+        }
+
+
+        // Lookup the dividend entry for the current date for the symbol
+        auto divValue = symbolDividends.second.find(date);
+
+        if (divValue != symbolDividends.second.end()) {
+            // Apply the particular dividend
+            this->portfolio_->add_cash(divValue->second * this->portfolio_->get_position(symbolDividends.first));
+        }
+    }
+
+
+
+    // Stock splits
+
+    // (Same as dividends but for splits)
+    for (const auto& symbolSplits : this->market_data_feed_->get_splits()) {
+
+        // Get the current date
+        std::string date = bars[symbolSplits.first].timestamp;
+
+        // Possible suffixes for first bar of the day (2 due to daylight savings shifting market open)
+        std::string suffix1 = " 13:30:00+00:00";
+        std::string suffix2 = " 14:30:00+00:00";
+
+        // Attempt to remove either time suffix from date (if bar is first of day)
+        if (date.size() >= suffix1.size() && date.compare(date.size() - suffix1.size(), suffix1.size(), suffix1) == 0) {
+            date.erase(date.size() - suffix1.size());
+        }
+        if (date.size() >= suffix2.size() && date.compare(date.size() - suffix2.size(), suffix2.size(), suffix2) == 0) {
+            date.erase(date.size() - suffix2.size());
+        }
+
+
+        // Lookup the split entry for the current date for the symbol
+        auto splitRatio = symbolSplits.second.find(date);
+
+        if (splitRatio != symbolSplits.second.end()) {
+            // Apply the split
+            std::cerr << "Date: " << date << "" << std::endl;
+            this->portfolio_->split_position(symbolSplits.first, splitRatio->second);
+        }
+    }
 }

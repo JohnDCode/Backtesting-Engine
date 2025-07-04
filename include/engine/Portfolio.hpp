@@ -36,6 +36,12 @@ public:
     double get_equity(const std::unordered_map<std::string, MarketDataBar>& market_data) const;
     std::vector<std::string> get_symbols() const;
 
+    // Mutator for cash
+    void add_cash(const double deposit) { this->cash_ += deposit; }
+
+    // Mutator for positions
+    void split_position(const std::string& symbol, const int ratio) { this->positions_[symbol] *= ratio; }
+
 private:
 
     // Portfolio's cash and positions

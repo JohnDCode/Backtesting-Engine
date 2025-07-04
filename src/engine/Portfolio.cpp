@@ -53,6 +53,11 @@ void Portfolio::apply_executed_orders(const std::vector<Order>& executed_orders,
         int shares = order.quantity;
         double cost = execution_price * shares;
 
+        // Ensure the portfolio has enough cash to process
+        if (cost > this->cash_) {
+            continue;
+        }
+
 
         // Update the portfolio based on the trade (cash and positions)
         cash_ -= cost;

@@ -12,6 +12,7 @@ JohnDavid Abe
 #include <string>
 #include "MarketDataBar.hpp"
 #include "OrderManager.hpp"
+#include "Portfolio.hpp"
 
 /**
  * @brief Strategy of which the engine will test
@@ -25,8 +26,8 @@ public:
     // Destructor
     virtual ~Strategy() = default;
 
-    // The integral part of the strategy object, taking data and making decisions based on the data
-    virtual void on_data(const std::unordered_map<std::string, MarketDataBar>& bars) = 0;
+    // The integral part of the strategy object, taking data and making decisions based on the data and current portfolio
+    virtual void on_data(const std::unordered_map<std::string, MarketDataBar>& bars, Portfolio portfolio) = 0;
 
     // Strategy API
     void buy(const std::string& symbol, int quantity);

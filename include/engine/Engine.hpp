@@ -32,6 +32,9 @@ public:
     // Runs the core backtest using the created strategy and available data
     void run_backtest();
 
+    // Checks for corporate actions (dividend payments, stock splits, etc.) and applies appropriate changes
+    void apply_corporate_actions(std::unordered_map<std::string, MarketDataBar>& bars);
+
 private:
     std::shared_ptr<MarketDataFeed> market_data_feed_;
     std::shared_ptr<OrderManager> order_manager_;
