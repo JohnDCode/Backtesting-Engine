@@ -36,6 +36,7 @@ for symbol in Options.symbols:
             found = True
             break
     if found:
+        # If the data already exists in the data folder, just import the csv to the engine
         market_data.load_from_csv(symbol, f"../data/{file_name}.csv")
         continue
 
@@ -71,11 +72,9 @@ for symbol in Options.symbols:
     div_series = tick.dividends
     split_series = tick.splits
 
-    # Convert pandas Series to dictionaries that can be past to cpp
+    # Convert pandas Series to dictionaries that can be past to cpp methods
     dividend_map = {str(date.date()): float(value) for date, value in div_series.items()}
     split_map = {str(date.date()): float(ratio) for date, ratio in split_series.items()}
-    print(dividend_map)
-    print(split_map)
 
     # Load dividend data to market feed
     market_data.add_dividends(symbol, dividend_map)

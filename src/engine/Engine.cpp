@@ -142,7 +142,6 @@ void Engine::apply_corporate_actions(std::unordered_map<std::string, MarketDataB
 
         if (splitRatio != symbolSplits.second.end()) {
             // Apply the split
-            std::cerr << "Date: " << date << "" << std::endl;
             this->portfolio_->split_position(symbolSplits.first, splitRatio->second);
         }
     }

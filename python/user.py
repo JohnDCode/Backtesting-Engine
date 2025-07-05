@@ -56,16 +56,15 @@ class Options:
 
 # Step 2: Implement Strategy
 
-# The engine will subclass the Strategy class from the cpp module
+# The user defined Strategy will subclass the exposed cpp Strategy class and then override the "on_data" method
 class MyStrategy(backtest_python.Strategy):
-    # Constructor for Strategy
     def __int__(self, order_m):
-        # Simply call the cpp base class constructor
         super().init_(order_m)
 
-    # Now, this subclass must override the base class "on_data" method
+
+
     # This method controls the Strategy response to each new bar of data
-    # Implement your Strategy here
+    # Implement trading Strategy here
     def on_data(self, bars, portfolio):
         # The user has the following actions available for the Strategy to perform:
 
@@ -78,29 +77,30 @@ class MyStrategy(backtest_python.Strategy):
         # self.stop_buy(symbol, # contracts, price)           -->     Stop Orders
         # self.stop_sell(symbol, # contracts, price)
 
+
         # The user can also access each symbol's data for the current bar via:
 
-        # aapl_bar = bars["AAPL"]       -->     Get the bar data for the symbol "AAPL"
+        # aapl_bar = bars["AAPL"]       -->     Get the current bar data for the symbol "AAPL"
 
         # aapl_bar.open                 -->     Retrieve data from the bar
         # aapl_bar.close
         # aapl_bar.high
         # aapl_bar.low
-        # aapl_bar.bid                 -->     Simulated bid/ask prices with 0.02% spread
+        # aapl_bar.bid                  -->     Simulated bid/ask prices with 0.02% spread
         # aapl_bar.ask
         # aapl_bar.volume
         # aapl_bar.timestamp
 
-        # Finally, the user can also access information on their portfolio:
+
+        # Finally, the user can also access the current state on their Portfolio:
 
         # portfolio.get_cash()              -->     Get cash on hand
-        # portfolio.get_equity(bars)        -->     Get current equity
-        # portfolio.get_position("AAPL")    -->     Get position on a particular symbol
+        # portfolio.get_equity(bars)        -->     Get current equity based on some bar data
+        # portfolio.get_position("AAPL")    -->     Get Portfolio's position on a particular symbol
 
 
-        # Example strategy (buying and selling Apple):
+        # Example Strategy (buying and selling Apple):
         if bars["AAPL"].ask < 100 and portfolio.get_cash() > 500:
             self.buy("AAPL", 5)
-
-        if bars["AAPL"].bid > 120 and portfolio.get_position("AAPL") > 5:
+        elif bars["AAPL"].bid > 120 and portfolio.get_position("AAPL") > 5:
             self.sell("AAPL", 5)
