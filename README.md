@@ -25,6 +25,14 @@
 
  ---
 
+ ### ⚙️Release
+
+The framework is distributed as a Python extension module (.so) that users can build on to create their own backtesters.
+
+(The module is published [here](https://github.com/JohnDCode/Backtesting-Engine-Publish))
+
+---
+
  ### 📄Documentation
  
 For the full development story and detailed writeup, check out the blog post here:  
