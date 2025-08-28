@@ -1,4 +1,4 @@
- 📊 <h1>Backtesting Engine</h1>
+ <h1>📊 Backtesting Engine</h1>
  A High-Performance C++ Engine with Python Strategy Interface
 
  <p>
@@ -9,12 +9,12 @@
 
  ---
 
- ✨ <h1>Overview</h1>
+ ### ✨ Overview
  The Backtesting Engine is a quantitative trading simulation framework written in C++ for performance
  with a Python interface for strategy scripting. It allows traders, researchers, and developers
  to rigorously test trading strategies before deploying to live markets.
 
- 🚀 <h1>Current features include:</h1>
+ #### 🚀 Current features include:
  - Fast, event-driven C++ simulation core
  - Market data ingestion from CSV or API
  - Order management with queue priority & latency simulation
@@ -24,7 +24,7 @@
 
  ---
 
- ⚡ <h1>Installation</h1>
+ ### ⚡Installation
  Clone the repo and build with CMake:
 
  git clone https://github.com/johndcode/BacktestingEngine.git
@@ -41,7 +41,7 @@
 
  ---
 
- 🛠️ <h1>Usage</h1>
+ ### 🛠️ Usage
 
  1. Define a Strategy in Python
  Strategies interact with the engine via a clean, high-level API:
@@ -66,7 +66,7 @@
 
  ---
 
- ⚙️ <h1>Core Components</h1>
+ ### ⚙️ Core Components
 
  - Engine → Core C++ simulation loop
  - MarketDataFeed → Feeds bars/ticks from CSV or API
@@ -78,7 +78,7 @@
 
  ---
 
- 🔮 <h1>Roadmap</h1>
+ ### 🔮 Roadmap
  Planned features for future versions:
  - Support for short-selling with margin constraints
  - Slippage & market impact simulation
@@ -88,7 +88,7 @@
 
  ---
 
- 📬 <h1>Contact</h1>
+ #### 📬 Contact
  👤 JohnDavid Abe
  📧 johndavidabe101@gmail.com
  💼 LinkedIn
