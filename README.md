@@ -1,5 +1,5 @@
  <h1>📊 Backtesting Engine</h1>
- A High-Performance C++ Engine with Python Strategy Interface
+ <h3>A High-Performance C++ Engine with Python Strategy Interface</h3>
 
  <p>
   <img src="https://img.shields.io/badge/C++-17-blue" alt="C++ 17">
