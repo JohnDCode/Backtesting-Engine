@@ -42,10 +42,9 @@ For the full development story and detailed writeup, check out the blog post her
 
  ---
 
- #### 📬 Contact
- 👤 JohnDavid Abe
- 📧 johndavidabe101@gmail.com
- 💼 LinkedIn
- 🧑‍💻 GitHub
+### 📫 Contact Me  
+- 📧 Email: **johndavidabe101@gmail.com**  
+- 💼 LinkedIn: [linkedin.com/in/johndcode](https://linkedin.com/in/johndcode)  
+- 🧑‍💻 GitHub: [github.com/johndcode](https://github.com/johndcode)  
 
  ⭐ If you like this project, consider giving it a star on GitHub!
