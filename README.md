@@ -2,9 +2,9 @@
  A High-Performance C++ Engine with Python Strategy Interface
 
  <p>
-  <img src="(https://img.shields.io/badge/C++-17-blue" alt="C++ 17">
+  <img src="https://img.shields.io/badge/C++-17-blue" alt="C++ 17">
   <img src="https://img.shields.io/badge/Python-3.10+-green" alt="Python 3.10+">
-  <img src="https://img.shields.io/github/license/johndcode/BacktestingEngine" alt="License">
+  <img src="https://img.shields.io/github/license/johndcode/Backtesting-Engine" alt="License">
 </p>
 
  ---
