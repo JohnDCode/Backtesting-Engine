@@ -10,7 +10,7 @@
  ---
 
  ### ✨ Overview
- The Backtesting Engine is a quantitative trading simulation framework written in C++ for performance
+ This Backtesting Engine Framework is a quantitative trading simulation framework written in C++ for performance
  with a Python interface for strategy scripting. It allows traders, researchers, and developers
  to rigorously test trading strategies before deploying to live markets.
 
