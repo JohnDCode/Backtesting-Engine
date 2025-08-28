@@ -2,7 +2,7 @@
  <h3>A High-Performance C++ Engine with Python Strategy Interface</h3>
 
  <p>
-  <img src="https://img.shields.io/badge/C++-17-blue" alt="C++ 17">
+  <img src="https://img.shields.io/badge/C++-20-blue" alt="C++ 20">
   <img src="https://img.shields.io/badge/Python-3.10+-green" alt="Python 3.10+">
   <img src="https://img.shields.io/github/license/johndcode/Backtesting-Engine" alt="License">
 </p>
@@ -18,63 +18,17 @@
  - Fast, event-driven C++ simulation core
  - Market data ingestion from CSV or API
  - Order management with queue priority & latency simulation
+ - Realistic trading mechanics (slippage, latency, corporate actions, short selling, stock splits, dividend payments)
  - Portfolio & PnL tracking
  - Python bindings (via pybind11) for strategy scripting
  - High-level Python API (buy(), sell(), etc.) without exposing raw orders
 
  ---
 
- ### ⚡Installation
- Clone the repo and build with CMake:
-
- git clone https://github.com/johndcode/BacktestingEngine.git
- cd BacktestingEngine
- mkdir build && cd build
- cmake ..
- make -j4
-
- The C++ binary will be located at:
- build/engine
-
- Python bindings will be available after:
- pip install .
-
- ---
-
- ### 🛠️ Usage
-
- 1. Define a Strategy in Python
- Strategies interact with the engine via a clean, high-level API:
-
- from backtesting import StrategyContext
-
- class MyStrategy:
-     def on_bar(self, ctx: StrategyContext, bar):
-         if bar.close > bar.open:
-             ctx.buy(quantity=10)
-         else:
-             ctx.sell(quantity=10)
-
- 2. Run Backtest
- Pass historical data into the engine:
-
- python run_backtest.py --data ./data/AAPL.csv --strategy MyStrategy
-
- ➡️ Produces portfolio performance, order logs, and risk metrics.
-
- (Insert screenshot of CLI output or equity curve here)
-
- ---
-
- ### ⚙️ Core Components
-
- - Engine → Core C++ simulation loop
- - MarketDataFeed → Feeds bars/ticks from CSV or API
- - Order & OrderManager → Limit, market, stop; queue priority handling
- - Portfolio → Tracks cash, positions, PnL, buying power
- - StrategyContext → Python-facing API for order submission
- - Latency Model → Simulates execution delay
- - Corporate Actions Handler → Adjusts for splits/dividends
+ ### 📄Documentation
+ 
+For the full development story and detailed writeup, check out the blog post here:  
+[My Backtesting Engine Framework](https://www.johndcode.com/posts/Backtesting-Engine/)  
 
  ---
 
